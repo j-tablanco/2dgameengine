@@ -1,10 +1,13 @@
 #ifndef KEYBOARDCONTROLCOMPONENT_H
 #define KEYBOARDCONTROLCOMPONENT_H
 
+#include "../Constants.h"
 #include "../Game.h"
 #include "../EntityManager.h"
 #include "./TransformComponent.h"
 #include "./SpriteComponent.h"
+#include <type_traits>
+#include <iostream>
 
 class KeyboardControlComponent : public Component
 {
@@ -46,6 +49,8 @@ class KeyboardControlComponent : public Component
 
         void Update( float deltaTime) override
         {
+            transform -> velocity.x = 0;
+            transform -> velocity.y = 0;
             std::string keyCode;
             if( Game::event.type == SDL_KEYDOWN)
             {
@@ -53,26 +58,27 @@ class KeyboardControlComponent : public Component
 
                 if (keyCode.compare(upKey) == 0)
                 {
-                    transform->velocity.y = -30; 
-                    transform->velocity.x = 0;
+
+                    if(transform->position.y >= 0)
+                        transform->velocity.y = -90; 
                     sprite->Play("UpAnimation");
                 }
                 if (keyCode.compare(rightKey) == 0)
                 {
-                    transform->velocity.y = 0; 
-                    transform->velocity.x = 30;
+                    if( transform->position.x <= WINDOW_WIDTH-32)
+                        transform->velocity.x = 250;
                     sprite->Play("RightAnimation");
                 }
                 if (keyCode.compare(downKey) == 0)
                 {
-                    transform->velocity.y = 30; 
-                    transform->velocity.x = 0;
+                    if( transform->position.y <= WINDOW_HEIGHT-32)
+                        transform->velocity.y = 250; 
                     sprite->Play("DownAnimation");
                 }
                 if (keyCode.compare(leftKey) == 0)
                 {
-                    transform->velocity.y = 0; 
-                    transform->velocity.x = -30;
+                    if( transform->position.x >= 0)
+                        transform->velocity.x = -90;
                     sprite->Play("LeftAnimation");
                 }
                 if (keyCode.compare(shootKey) == 0)

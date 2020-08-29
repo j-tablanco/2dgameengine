@@ -5,15 +5,18 @@
 #include "./Constants.h"
 #include "./Game.h"
 #include "./AssetManager.h"
+#include "./Map.h"
 #include "./Components/TransformComponent.h"
 #include "./Components/SpriteComponent.h"
 #include "./Components/KeyboardControlComponent.h"
+
 
 #include "../lib/glm/glm.hpp"
 
 
 EntityManager manager;
 AssetManager* Game::assetManager = new AssetManager(&manager);
+Map* map;
 SDL_Renderer* Game::renderer;
 SDL_Event Game::event;
 
@@ -74,13 +77,15 @@ void Game::LoadLevel(int levelNumber)
     /*Start including new assets to the asset manager list*/
     assetManager -> AddTexture("tank-image", std::string("./assets/images/tank-big-left.png").c_str());
     assetManager -> AddTexture("chopper-image", std::string("./assets/images/chopper-spritesheet.png").c_str());
+    assetManager -> AddTexture("jungle-tiletexture", std::string("./assets/tilemaps/jungle.png").c_str());
+
+    map = new Map("jungle-tiletexture", 2, 32);
+    map->LoadMap("./assets/tilemaps/jungle.map", 25, 20);
 
     /*Start including entities and components to them*/
-    Entity& tankEntity(manager.AddEntity("tank"));
-    tankEntity.AddComponent<TransformComponent>(0, 0, 5, 0, 32, 32, 1);
-    tankEntity.AddComponent<SpriteComponent>("tank-image");
+    Entity& tankEntity(manager.AddEntity("tank", ENEMY_LAYER));
 
-    Entity& chopperEntity(manager.AddEntity("chopper"));
+    Entity& chopperEntity(manager.AddEntity("chopper", PLAYER_LAYER));
     chopperEntity.AddComponent<TransformComponent>(40,60, 0, 0, 32, 32, 1);
     chopperEntity.AddComponent<SpriteComponent>("chopper-image", 2, 90, true, false);
     chopperEntity.AddComponent<KeyboardControlComponent>("up", "right", "down", "left", "space");
